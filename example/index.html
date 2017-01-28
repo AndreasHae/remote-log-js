@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <title>Remote Log Example</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="frontend.js"></script>
+    <script src="../src/frontend.js"></script>
 </head>
 <body>
-    <div class="log">
-        <div class="title">Event log</div>
-        <div class="messages">
-            <div class="message"><span class="date">1 Jan 13:30</span> <span class="tag">Tag</span> Lorem Ipsum dolor sit amet</div>
-        </div>
+    <div class="logContainer">
+        <div class="logTitle">Event log</div>
+        <div class="log"></div>
     </div>
+    <script>
+        rlog('.log', 'http://localhost/rlog', { wait: 5 })
+    </script>
 </body>
 </html>
