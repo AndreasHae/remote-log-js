@@ -1,6 +1,6 @@
 {
   "name": "remote-log-js",
-  "version": "0.0.1-alpha",
+  "version": "0.0.3-alpha",
   "description": "A simple remote log.",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "jasmine": "^2.5.3"
+    "connect": "^3.5.0",
+    "jasmine": "^2.5.3",
+    "serve-static": "^1.11.2"
   }
 }

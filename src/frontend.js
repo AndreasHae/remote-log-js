@@ -28,9 +28,17 @@ var rlog = rlog || function (el, host, options) {
                 + ':' + leftPad(date.getSeconds())
         }
 
+        function flatten(arr) {
+            return arr.reduce((flat, toFlatten) => {
+                return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)
+            }, [])
+        }
+
         return {
             add: function (...entries) {
+                entries = flatten(entries)
                 entries.forEach((entry) => {
+                    console.log(entry)
                     _entries.push(entry)
 
                     var entryDiv = document.createElement('div')
@@ -63,22 +71,23 @@ var rlog = rlog || function (el, host, options) {
     })()
 
     function refreshEntries() {
-        /*
         var request = new XMLHttpRequest()
         request.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
                 entries = JSON.parse(request.responseText)
-                entries.forEach(addEntry)
+                console.log(entries)
+                Entries.add(entries)
             }
         }
         request.open('GET', host, true)
-        request.send()*/
+        request.send()
+        /*
         var entry = {
             date: new Date().getTime(),
             tags: ['tag'],
             msg: 'Lorem Ipsum dolor sit amet'
         }
-        Entries.add(entry)
+        Entries.add(entry)*/
     }
 
     /* Initially, request as many entries as needed to fill the log div
@@ -88,5 +97,5 @@ var rlog = rlog || function (el, host, options) {
      */
 
     refreshEntries()
-    setInterval(refreshEntries, options.wait || 0)
+    //setInterval(refreshEntries, options.wait || 0)
 }

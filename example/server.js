@@ -1,21 +1,16 @@
-const http = require('http')
-const rlog = require('remote-log')
+const connect = require('connect')
+const serveStatic = require('serve-static')
+const rlog = require('../src/backend')
 
-const server = http.createServer((req, res) => {
-    fs.readFile(__dirname + '/index.html', (err, data) => {
-        if (err) {
-            res.writeHead(500);
-            return res.end('Error loading index.html');
-        }
-
-        res.writeHead(200);
-        res.end(data);
-    });
-})
+const app = connect()
+app.use(serveStatic('.', {root: ['index.html']}))
+app.use(serveStatic('../src'))
 
 const log = rlog()
-server.on('request', log)
+app.use(log)
 
 log.send('Hello world!', 'tag')
 log.send('Hello world!', 'multiple', 'tags')
 log.send('Hello world!', ['tag', 'arrays'])
+
+app.listen(80)
