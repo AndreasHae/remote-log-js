@@ -2,8 +2,17 @@ var rlog = rlog || function (el, host, options) {
     
     var logElements = document.querySelectorAll(el)
 
-    var Entries = (function () {
-        var _entries = []
+    /* Initially, request as many entries as needed to fill the log div
+     * After that, only get the changes eg. new entries, deleted entries etc.
+     * If someone scrolls up, request more entries
+     * This could be done by querying messages dated before the earliest message that is already being displayed
+     */
+
+    refreshEntries()
+    //setInterval(refreshEntries, options.wait || 0)
+
+    var Log = (function () {
+        var entries = []
 
         function formatDate(date) {
             var monthNames = [
@@ -29,49 +38,44 @@ var rlog = rlog || function (el, host, options) {
         }
 
         function flatten(arr) {
-            return arr.reduce((flat, toFlatten) => {
+            return arr.reduce(function (flat, toFlatten) {
                 return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)
             }, [])
         }
 
         return {
-            add: function (...entries) {
-                entries = flatten(entries)
-                entries.forEach((entry) => {
-                    console.log(entry)
+            add: function (entry) {
+                var entryDiv = document.createElement('div')
+                entryDiv.classList.add('entry')
 
-                    var entryDiv = document.createElement('div')
-                    entryDiv.classList.add('entry')
+                var dateSpan = document.createElement('span')
+                dateSpan.classList.add('date')
+                dateSpan.innerText = formatDate(new Date(entry.date))
 
-                    var dateSpan = document.createElement('span')
-                    dateSpan.classList.add('date')
-                    dateSpan.innerText = formatDate(new Date(entry.date))
+                entryDiv.appendChild(dateSpan)
 
-                    entryDiv.appendChild(dateSpan)
-
-                    entry.tags.forEach((tag) => {
-                        var tagSpan = document.createElement('span')
-                        tagSpan.classList.add('tag')
-                        tagSpan.innerText = tag
-                        entryDiv.appendChild(tagSpan)
-                    })
-
-                    var msgSpan = document.createElement('span')
-                    msgSpan.classList.add('msg')
-                    msgSpan.innerText = entry.msg
-                    entryDiv.appendChild(msgSpan)
-
-                    for (var i = 0; i < logElements.length; i++) {
-                        logElements[i].appendChild(entryDiv)
-                    }
-
-                    _entries.push(entryDiv)
+                entry.tags.forEach(function (tag) {
+                    var tagSpan = document.createElement('span')
+                    tagSpan.classList.add('tag')
+                    tagSpan.innerText = tag
+                    entryDiv.appendChild(tagSpan)
                 })
+
+                var msgSpan = document.createElement('span')
+                msgSpan.classList.add('msg')
+                msgSpan.innerText = entry.msg
+                entryDiv.appendChild(msgSpan)
+
+                for (var i = 0; i < logElements.length; i++) {
+                    logElements[i].appendChild(entryDiv)
+                }
+
+                entries.push(entryDiv)
             },
 
             clear: function () {
-                _entries.forEach((element) => element.remove())
-                _entries = []
+                entries.forEach(function (element) { element.remove() })
+                entries = []
             }
         }
     })()
@@ -80,26 +84,12 @@ var rlog = rlog || function (el, host, options) {
         var request = new XMLHttpRequest()
         request.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
-                if (request.responseText === 'clear') {
-                    Entries.clear()
-                } else {
-                    entries = JSON.parse(request.responseText)
-                    console.log(entries)
-                    Entries.clear()
-                    Entries.add(entries)
-                }
+                Log.clear()
+                entries = JSON.parse(request.responseText)
+                entries.forEach(function (entry) { Log.add(entry) })
             }
         }
         request.open('GET', host, true)
         request.send()
     }
-
-    /* Initially, request as many entries as needed to fill the log div
-     * After that, only get the changes eg. new entries, deleted entries etc.
-     * If someone scrolls up, request more entries
-     * This could be done by querying messages dated before the earliest message that is already being displayed
-     */
-
-    refreshEntries()
-    //setInterval(refreshEntries, options.wait || 0)
 }
