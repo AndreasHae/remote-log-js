@@ -6,7 +6,7 @@ const app = connect()
 app.use(serveStatic('.', {root: ['index.html']}))
 app.use(serveStatic('../src'))
 
-const log = rlog()
+const log = rlog('/rlog')
 app.use(log)
 
 log.send('Hello world!', 'tag')

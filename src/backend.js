@@ -6,12 +6,9 @@ function flatten(arr) {
     }, [])
 }
 
-function createHandler(options) {
-    options = options || {}
-    const url = options.url || '/rlog'
-
+function createHandler(url) {
     handler = (req, res, next) => {
-        if (!(req.method === 'GET' && req.url === '/rlog')) {
+        if (!(req.method === 'GET' && (url === undefined || req.url === url))) {
             if (next) {
                 next()
             } else {
