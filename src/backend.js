@@ -32,6 +32,10 @@ function createHandler(url) {
         })
     }
 
+    handler.clear = () => {
+        entries = []
+    }
+
     return handler
 }
 

@@ -10,6 +10,7 @@ const log = rlog('/rlog')
 app.use(log)
 
 log.send('Hello world!', 'tag')
+log.clear()
 log.send('Hello world!', 'multiple', 'tags')
 log.send('Hello world!', ['tag', 'arrays'])
 

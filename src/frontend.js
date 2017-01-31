@@ -39,7 +39,6 @@ var rlog = rlog || function (el, host, options) {
                 entries = flatten(entries)
                 entries.forEach((entry) => {
                     console.log(entry)
-                    _entries.push(entry)
 
                     var entryDiv = document.createElement('div')
                     entryDiv.classList.add('entry')
@@ -65,7 +64,14 @@ var rlog = rlog || function (el, host, options) {
                     for (var i = 0; i < logElements.length; i++) {
                         logElements[i].appendChild(entryDiv)
                     }
+
+                    _entries.push(entryDiv)
                 })
+            },
+
+            clear: function () {
+                _entries.forEach((element) => element.remove())
+                _entries = []
             }
         }
     })()
@@ -74,20 +80,18 @@ var rlog = rlog || function (el, host, options) {
         var request = new XMLHttpRequest()
         request.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
-                entries = JSON.parse(request.responseText)
-                console.log(entries)
-                Entries.add(entries)
+                if (request.responseText === 'clear') {
+                    Entries.clear()
+                } else {
+                    entries = JSON.parse(request.responseText)
+                    console.log(entries)
+                    Entries.clear()
+                    Entries.add(entries)
+                }
             }
         }
         request.open('GET', host, true)
         request.send()
-        /*
-        var entry = {
-            date: new Date().getTime(),
-            tags: ['tag'],
-            msg: 'Lorem Ipsum dolor sit amet'
-        }
-        Entries.add(entry)*/
     }
 
     /* Initially, request as many entries as needed to fill the log div
