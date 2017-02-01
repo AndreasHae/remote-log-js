@@ -37,12 +37,6 @@ var rlog = rlog || function (el, host, options) {
                 + ':' + leftPad(date.getSeconds())
         }
 
-        function flatten(arr) {
-            return arr.reduce(function (flat, toFlatten) {
-                return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)
-            }, [])
-        }
-
         return {
             add: function (entry) {
                 var entryDiv = document.createElement('div')
