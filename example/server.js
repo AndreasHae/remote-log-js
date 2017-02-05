@@ -13,5 +13,5 @@ log.send('Hello world!', 'tag')
 log.clear()
 log.send('Hello world!', 'multiple', 'tags')
 log.send('Hello world!', ['tag', 'arrays'])
-
+setInterval(() => log.send('Hi', 'tag'), 4000)
 app.listen(80)

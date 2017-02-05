@@ -17,7 +17,7 @@ function getParams(urlStr) {
         const count = parseInt(query.count)
         const offset = parseInt(query.offset)
 
-        if ((!isNaN(count) && count > 0) || (!isNaN(offset) && offset > 0)) {
+        if ((!isNaN(count) && count >= 0) || (!isNaN(offset) && offset >= 0)) {
             return {
                 count: count,
                 offset: offset
