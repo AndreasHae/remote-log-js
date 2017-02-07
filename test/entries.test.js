@@ -1,10 +1,32 @@
 describe('entries', () => {
     const entries = require('../src/entries')
 
-    const testEntries = ['entry1', 'entry2', 'entry3']
+    function generateTestEntries(count) {
+        const testEntries = []
 
+        for (let i = 0; i < count; i++) {
+            testEntries.push({
+                msg: 'entry' + i,
+                tags: 'someTags',
+                date: new Date()
+            })
+        }
+
+        return testEntries
+    }
+
+    let testEntries;
     beforeEach(() => {
-        testEntries.forEach((entry) => entries.add(entry))
+        testEntries = generateTestEntries(3)
+        testEntries.forEach((entry) => entries.add(entry));
+    })
+
+    describe('add', () => {
+
+        it('throws an error if the given object is not an entry', () => {
+            expect(entries.add.bind(null, 'i am not an entry')).toThrowError('Given object is not an entry')
+        })
+
     })
 
     describe('get', () => {
@@ -27,6 +49,33 @@ describe('entries', () => {
 
         it('returns all entries with an offset', () => {
             expect(entries.get(0, 1)).toEqual(testEntries.slice(0, 2))
+        })
+
+    })
+
+    describe('getAfter', () => {
+
+        it('returns all entries sent after the given date', () => {
+            const testDate = new Date()
+            const testEntry = {
+                msg: 'testEntry',
+                tags: [],
+                date: new Date(testDate.getTime() + 10)
+            }
+
+            entries.add(testEntry)
+            expect(entries.getAfter(testDate)).toEqual([testEntry])
+        })
+
+        it('returns the entries in chronological order', () => {
+            const testDate = new Date()
+            const testEntries = generateTestEntries(2)
+            testEntries.forEach((entry, index) => {
+                entry.date = new Date(testDate.getTime() + index + 1)
+                entries.add(entry)
+            })
+            
+            expect(entries.getAfter(testDate)).toEqual(testEntries)
         })
 
     })
