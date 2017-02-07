@@ -1,13 +1,9 @@
 const querystring = require('querystring')
 const url = require('url')
 
-const entries = require('./entries')
+const flatten = require('flatten')
 
-function flatten(arr) {
-    return arr.reduce((flat, toFlatten) => {
-        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)
-    }, [])
-}
+const entries = require('./entries')
 
 function getParams(urlStr) {
     const parsedUrl = url.parse(urlStr)
