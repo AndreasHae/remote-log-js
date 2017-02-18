@@ -1,6 +1,6 @@
 {
   "name": "remote-log-js",
-  "version": "0.0.3-alpha",
+  "version": "0.1.0-alpha",
   "description": "A simple remote log.",
   "main": "index.js",
   "scripts": {
