@@ -8,7 +8,7 @@ describe('entries', () => {
             testEntries.push({
                 msg: 'entry' + i,
                 tags: 'someTags',
-                date: new Date()
+                date: new Date().getTime()
             })
         }
 
@@ -21,61 +21,44 @@ describe('entries', () => {
         testEntries.forEach((entry) => entries.add(entry));
     })
 
-    describe('add', () => {
+    describe('get', () => {
 
-        it('throws an error if the given object is not an entry', () => {
-            expect(entries.add.bind(null, 'i am not an entry')).toThrowError('Given object is not an entry')
+        it('returns all entries', () => {
+            expect(entries.get()).toEqual(testEntries)
         })
 
     })
 
-    describe('get', () => {
-
-        it('returns all entries if no parameters are given', () => {
-            expect(entries.get()).toEqual(testEntries)
+    describe('getBefore', () => {
+        
+        it('returns all entries before the given date', () => {
+            const newEntries = generateTestEntries(3)
+            const date = newEntries[0].date + 10
+            expect(entries.getBefore(date)).toEqual(newEntries)
         })
 
-        it('returns a certain amount of entries', () => {
-            expect(entries.get(2)).toEqual(testEntries.slice(1, 3))
-        })
-
-        it('returns an offset amount of entries', () => {
-            expect(entries.get(2, 1)).toEqual(testEntries.slice(0, 2))
-        })
-
-        it('returns all entries if the given amount is 0', () => {
-            expect(entries.get(0)).toEqual(testEntries)
-        })
-
-        it('returns all entries with an offset', () => {
-            expect(entries.get(0, 1)).toEqual(testEntries.slice(0, 2))
+        it('returns the given number of entries before the given date', () => {
+            const newEntries = generateTestEntries(3)
+            const date = newEntries[0].date + 10
+            const count = 2
+            // returns in chronological order, hence slice(1, 3)
+            expect(entries.getBefore(date, count)).toEqual(newEntries.slice(1, 3))
         })
 
     })
 
     describe('getAfter', () => {
-
-        it('returns all entries sent after the given date', () => {
-            const testDate = new Date()
-            const testEntry = {
-                msg: 'testEntry',
-                tags: [],
-                date: new Date(testDate.getTime() + 10)
-            }
-
-            entries.add(testEntry)
-            expect(entries.getAfter(testDate)).toEqual([testEntry])
+        
+        it('returns all entries after the given date', () => {
+            const newEntries = generateTestEntries(3)
+            const date = newEntries[0].date - 10
+            expect(entries.getAfter(date)).toEqual(newEntries)
         })
 
-        it('returns the entries in chronological order', () => {
-            const testDate = new Date()
-            const testEntries = generateTestEntries(2)
-            testEntries.forEach((entry, index) => {
-                entry.date = new Date(testDate.getTime() + index + 1)
-                entries.add(entry)
-            })
-            
-            expect(entries.getAfter(testDate)).toEqual(testEntries)
+        it('returns the given number of entries after the given date', () => {
+            const newEntries = generateTestEntries(3)
+            const date = newEntries[0].date - 10
+            expect(entries.getAfter(date, 2)).toEqual(newEntries.slice(0, 2))
         })
 
     })
